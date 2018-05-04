@@ -5,18 +5,19 @@ from lxml import etree
 import json
 import jsonpath
 
+#下一页
 def pageadd():
     global page
     page += 1
     search(page)
-
+#上一页
 def pageless():
     global page
     page -= 1
-    if page == 0:
+    if page <= 0:
         return
     search(page)
-
+#数据采集
 def search(page):
     global lb
     global entry1
@@ -36,18 +37,22 @@ def search(page):
         respone = requests.get(url_start, headers=header)
         content = etree.HTML(respone.text)
         linkList = content.xpath('//a[@style="font-weight: bold"]/@href')
+        if linkList == []:
+            text1.delete(0.0, tkinter.END)
+            text1.insert(tkinter.INSERT, '已经到底了,没有下一页了')
+            return
         str1 = pipeline(linkList)
         insert(str1)
     else:
         text1.delete(0.0, tkinter.END)
         text1.insert(tkinter.INSERT, '请将查询信息输入完整')
         return
-
+#搜索按钮
 def realSearch():
     global page
     page = 1
     search(page)
-
+#将职位,薪资插入listbox
 def insert(str):
     global lb
     global list_all
@@ -70,14 +75,20 @@ def insert(str):
     for company in list_all:
         count += 1
         lb.insert(tkinter.END, '{} {} 薪资:{}'.format(count, company[0], company[1]))
-
+#对采集的数据进行处理 返回str
 def pipeline(linkList):
     header = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36'}
     str = ''
     count = 0
+    if len(linkList) < 20 :
+        offset = len(linkList)
+    else:
+        offset = 20
     for link in linkList:
         count += 1
+        if count == offset:
+            return str
         item = {}
         respone = requests.get(link, headers=header)
         if len(respone.text) != 0:
@@ -101,9 +112,7 @@ def pipeline(linkList):
             item['workUrl'] = link
             text = json.dumps(dict(item), ensure_ascii=False)
             str += text + ','
-        if count == 20:
-            return str
-
+#双击后显示具体要求
 def realmyPrint(event):
     global lb
     global text1
@@ -114,7 +123,7 @@ def realmyPrint(event):
                  '工作地点:{}\n招聘人数:{}\n{}'.format(list_all[index[0]][2], list_all[index[0]][3], list_all[index[0]][4]))
     text2.delete(0.0, tkinter.END)
     text2.insert(tkinter.INSERT, list_all[index[0]][5])
-
+#gui界面
 def main():
     global lb
     global entry2
