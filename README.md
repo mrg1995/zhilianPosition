@@ -10,7 +10,7 @@
 
 智联招聘的url:
 
-http://sou.zhaopin.com/jobs/searchresult.ashx?jl= 地点(需url转码) &kw=关键字(需url转码)&sm=0&p=1(页面)
+```http://sou.zhaopin.com/jobs/searchresult.ashx?jl= 地点(需url转码) &kw=关键字(需url转码)&sm=0&p=1(页面)```
 
 抓取该页面的职位链接://a[@style='font-weight: bold']/@href
 
