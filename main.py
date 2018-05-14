@@ -32,7 +32,7 @@ def search(page):
         url = 'http://sou.zhaopin.com/jobs/searchresult.ashx?jl={}&kw={}&p='.format(address, workName)
         header = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36'}
-       
+        # 此次打开文件是为了擦除之前的数据
         url_start = url + str(page)
         respone = requests.get(url_start, headers=header)
         content = etree.HTML(respone.text)
@@ -71,7 +71,9 @@ def insert(str):
             list_all.append(list)
     except:
         pass
+    count = 0
     for company in list_all:
+        count += 1
         lb.insert(tkinter.END, '{} {} 薪资:{}'.format(count, company[0], company[1]))
 #对采集的数据进行处理 返回str
 def pipeline(linkList):
@@ -79,14 +81,12 @@ def pipeline(linkList):
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36'}
     str = ''
     count = 0
-    #对边界进行处理,最后一页一般不满20条数据的
     if len(linkList) < 20 :
         offset = len(linkList)
     else:
         offset = 20
     for link in linkList:
         count += 1
-        #控制显示的职位数量
         if count == offset:
             return str
         item = {}
@@ -161,47 +161,5 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
